@@ -29,10 +29,19 @@ module Handler = struct
   ;;
 
   let css request controller =
+    (* TODO: Currently, we are using actual CSS files here instead of using Cow to write
+       them in OCaml. *)
     Log.debug "entering css handler with controller %s"
       (Sexp.to_string (Routes.Controller.Style.sexp_of_t controller));
-    let body = <:css< html, body { color: blue; } >> in
-    dynamic ~headers:Content_type.css request (Css.to_string body)
+    let body =
+      let open Routes.Controller.Style in
+      match controller with
+      | Main -> Reader.file_contents "public/css/main.css"
+      | Reset -> Reader.file_contents "public/css/reset.css"
+    in
+    body
+    >>= (fun body ->
+    dynamic ~headers:Content_type.css request body)
   ;;
 
   let html request controller =
@@ -46,7 +55,7 @@ module Handler = struct
 
   let file request path =
     hlog "file" path;
-    Reader.file_contents (String.concat ~sep:"/" (List.cons "public" path))
+    Reader.file_contents (String.concat ~sep:"/" path)
     >>= dynamic request
   ;;
 
