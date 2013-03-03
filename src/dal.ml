@@ -7,13 +7,6 @@ open Cow
 
 open Misc
 
-let setup_logging =
-  Log.Global.set_output [ Log.Output.screen ];
-  Log.Global.set_level  `Debug;
-;;
-
-module Log = Log.Global
-
 let port = 8888;;
 
 let main port =

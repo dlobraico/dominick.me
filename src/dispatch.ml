@@ -6,50 +6,48 @@ open Cohttp_async
 
 open Misc
 
-module Content_types = struct
-  let html =
-    [("content-type", "text/html")]
-  ;;
-
-  let css =
-    [("content-type", "text/css")]
-  ;;
+module Content_type = struct
+  let html = [ ("content-type", "text/html") ]
+  let css =  [ ("content-type", "text/css") ]
 end
 
 module Handler = struct
+  let hlog handler path =
+    let path = String.concat ~sep:"/" path in
+    Log.debug "entering %s handler with path %s" handler path
+  ;;
+
   let dynamic ?(headers=[]) request body =
     let status = `OK in
     let headers = Header.of_list headers in
     Server.respond_string ~headers ~status ~body ()
   ;;
 
-  let css request path =
-    let body =
-      match path with
-      | ["css"; "main.css"] -> <:css< html, body { color: blue; } >>
-      | _ -> failwith "Not found"
-    in
-    dynamic ~headers:Content_types.css request (Css.to_string body)
+  let not_found request path =
+    hlog "not_found" path;
+    Server.respond_string ~status:`Not_found ~body:"Not found." ()
   ;;
 
-  let html request path =
-    let content =
-      match path with
-      | [] -> <:html< <h1>Hi!</h1> >>
-      | _  -> failwith "Not found"
-    in
+  let css request controller =
+    Log.debug "entering css handler with controller %s"
+      (Sexp.to_string (Routes.Controller.Style.sexp_of_t controller));
+    let body = <:css< html, body { color: blue; } >> in
+    dynamic ~headers:Content_type.css request (Css.to_string body)
+  ;;
+
+  let html request controller =
+    Log.debug "entering html handler with controller %s"
+      (Sexp.to_string (Routes.Controller.Page.sexp_of_t controller));
+    let content = <:html< <h1>Hi!</h1> >> in
     Tmpl.t "main" content
     >>= fun body ->
-    dynamic ~headers:Content_types.html request (Html.to_string body)
+    dynamic ~headers:Content_type.html request (Html.to_string body)
   ;;
 
   let file request path =
+    hlog "file" path;
     Reader.file_contents (String.concat ~sep:"/" (List.cons "public" path))
     >>= dynamic request
-  ;;
-
-  let not_found request path =
-    Server.respond_string ~status:`Not_found ~body:"Not found." ()
   ;;
 
   let exn exn =
@@ -60,14 +58,14 @@ module Handler = struct
 end
 
 let go conn_id ?body request =
-  let path = List.drop (Filename.parts (Request.path request)) 1 in
-  let handle =
-    match List.hd path with
-    | Some "css" | Some "styles"  -> Handler.css
-    (* | Some "js"  | Some "scripts" -> Handler.js *)
-    | Some "img" | Some "images"  -> Handler.file
-    | Some _ -> Handler.html
-    | None -> Handler.not_found
-  in
-  handle request path
+  Routes.load ()
+  >>= fun routes ->
+  let path  = Request.path request in
+  let route = Routes.resolve routes path in
+  let open Routes.Handler in
+  match route with
+  | Some (Css controller)  -> Handler.css request controller
+  | Some (File path) -> Handler.file request (Filename.parts path)
+  | Some (Html controller) -> Handler.html request controller
+  | _ -> Handler.not_found request (Filename.parts path)
 ;;

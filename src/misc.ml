@@ -1,5 +1,13 @@
 open Core.Std
+open Async.Std
 open Cow
+
+let setup_logging =
+  Log.Global.set_output [ Log.Output.screen ];
+  Log.Global.set_level  `Debug;
+;;
+
+module Log = Log.Global
 
 module List = struct
   (* Core.List doesn't include the flatten function which apparently causes problems with
