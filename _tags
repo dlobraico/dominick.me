@@ -1,3 +1,3 @@
 true: syntax(camlp4o)
-true: package(core,core_extended,async,cohttp,cohttp.async,cow,sexplib.syntax,bin_prot.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax,cow.syntax)
+true: package(core,core_extended,async,cohttp,cohttp.async,cow,sqlite3,sexplib.syntax,bin_prot.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax,cow.syntax)
 true: thread,debug,annot

@@ -13,7 +13,7 @@ end
 
 module Handler = struct
   let hlog handler path =
-    let path = String.concat ~sep:"/" path in
+    let path = String.concat ~sep:"/" (Option.value ~default:[] (List.tl path)) in
     Log.debug "entering %s handler with path %s" handler path
   ;;
 
