@@ -23,13 +23,14 @@ module Config = struct
 
   let load = Memo.unit load
 
-  let production =
-    let config = load in
-    production config
-  ;;
-
-  let development =
-    let config = load in
-    development config
-  ;;
 end
+
+let production ?mode () =
+  let config = load in
+  db_open ?mode (production config)
+;;
+
+let development ?mode () =
+  let config = load in
+  db_open ?mode (development config)
+;;
