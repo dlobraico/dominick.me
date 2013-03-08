@@ -47,7 +47,8 @@ module Handler = struct
   let html request controller =
     Log.debug "entering html handler with controller %s"
       (Sexp.to_string (Routes.Controller.Page.sexp_of_t controller));
-    let content = <:html< <h1>Hi!</h1> >> in
+    let content = <:html< <h1>Hello!</h1><p>This site is still under development
+    and will hopefully be done soon.</p> >> in
     Tmpl.t "main" content
     >>= fun body ->
     dynamic ~headers:Content_type.html request (Html.to_string body)
