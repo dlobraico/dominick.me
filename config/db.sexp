@@ -1,4 +1,4 @@
 ((production db/production.db)
- (development db/development)
+ (development db/development.db)
  ;; (test db/test.db)
  )

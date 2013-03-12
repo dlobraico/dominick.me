@@ -3,7 +3,14 @@ open Async.Std
 open Cow
 
 let setup_logging =
-  Log.Global.set_output [ Log.Output.screen ];
+  (* Log.Global.set_output [ Log.Output.screen ]; *)
+  let filename =
+    let open Env in
+    match current with
+    | Production -> "log/production.log"
+    | Development -> "log/development.log"
+  in
+  Log.Global.set_output [ Log.Output.screen; Log.Output.file `Text ~filename ];
   Log.Global.set_level  `Debug;
 ;;
 

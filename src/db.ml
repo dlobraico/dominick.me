@@ -1,4 +1,5 @@
 open Core.Std
+open Async.Std
 open Sqlite3
 
 module Config = struct
@@ -18,7 +19,7 @@ module Config = struct
   let load () =
     (Unix.access default_path [`Exists] >>= function
     | Ok ()   -> Reader.load_sexp_exn default_path t_of_sexp
-    | Error _ -> return default)
+    | _ -> return default)
   ;;
 
   let load = Memo.unit load
@@ -26,11 +27,13 @@ module Config = struct
 end
 
 let production ?mode () =
-  let config = load in
-  db_open ?mode (production config)
+  Config.load ()
+  >>| fun config ->
+  db_open ?mode (Config.production config)
 ;;
 
 let development ?mode () =
-  let config = load in
-  db_open ?mode (development config)
+  Config.load ()
+  >>| fun config ->
+  db_open ?mode (Config.development config)
 ;;
