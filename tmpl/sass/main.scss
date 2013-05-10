@@ -83,12 +83,14 @@ body #wrapper {
                     a {
                         color: $black;
                         text-decoration: none;
-                        border-bottom: 1px dashed $red;
+                        border-left: 2px dotted $red;
+                        padding-left: 2px;
                     }
 
                     a:hover {
                         padding: 0;
-                        border-bottom: none;
+                        padding-left: 4px;
+                        border-left: none;
                     }
                 }
 
