@@ -1,0 +1,122 @@
+@import 'bourbon/bourbon';
+@import "grid-settings";
+@import "neat/neat";
+
+@import 'fonts';
+@import 'colors';
+
+html, body {}
+
+body #wrapper {
+    @include outer-container;
+
+    height: 100%;
+    min-height: 960px;
+    font-family: Cardo;
+    font-size: 1em;
+
+    header {
+        height: 48px;
+        width: 100%;
+        font-family: NeoRetroDraw;
+        color: $gray;
+        font-size: 2em;
+        margin: 0;
+        border-bottom: 2px $gray solid;
+
+        h1 {
+            text-align: center;
+        }
+    }
+
+    footer {
+        @include fill-parent;
+        height: 48px;
+        font-family: NeoRetroDraw;
+        border-top: 2px $gray solid;
+        ul {
+            list-style-type: none;
+            @include fill-parent;
+
+            li {
+                text-align: center;
+                @include span-columns(4 of 12);
+
+                @include media($mobile) {
+                    @include span-columns(2 of 6);
+                }
+                @include media($narrow) {
+                    @include span-columns(3 of 9);
+                }
+
+                a {
+                    color: $gray;
+                    text-decoration: none;
+                }
+
+                a:hover {
+                    font-family: NeoRetroFill;
+                }
+            }
+        }
+    }
+    
+
+    #posts {
+        @include fill-parent;
+
+        article {
+            list-style-type: none;
+            height: 96px;
+            margin-bottom: 4em;
+            @include fill-parent;
+
+            header {
+                font-family: Cardo;
+                font-size: 1.1em;
+                height: 30px;
+
+                h1.title {
+                    float: left;
+                    text-align: left;
+
+                    a {
+                        color: $black;
+                        text-decoration: none;
+                        border-bottom: 1px dashed $red;
+                    }
+
+                    a:hover {
+                        padding: 0;
+                        border-bottom: none;
+                    }
+                }
+
+                h2.created_at {
+                    float: right;
+                    text-align: right;
+                    color: $black;
+                    font-style: italic;
+                }
+
+            }
+
+            .description {
+                clear: both;
+                text-align: justify;
+                color: $black;
+            }
+        }
+
+        .break {
+            clear: both;
+            margin: 0px auto;
+            margin-top: 1em;
+            height: 30px;
+            width: 30px;
+            background-image: url('/img/break.svg');
+            background-repeat: no-repeat;
+            background-size: 100%;
+        }
+    }
+}
