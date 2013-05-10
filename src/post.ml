@@ -20,10 +20,8 @@ let html_of_t t =
   <:html<
     <article class="post">
       <header>
-        <a href=$str:link t$>
-          <h1>$str:title t$</h1>
-        </a>
-        <h2>$str:created_at t$</h2>
+        <h1 class="title"><a href=$str:link t$>$str:title t$</a></h1>
+        <h2 class="created_at">$str:created_at t$</h2>
       </header>
       <div class="description">$str:description t$</div>
     </article>
@@ -31,8 +29,9 @@ let html_of_t t =
 ;;
 
 let create ~created_at ~modified_at ~published ~link ~title ~description =
-  (* let created_at = Time.to_string created_at in *)
-  (* let modified_at = Time.to_string modified_at in *)
+  let fmt = "%l:%m %p, %d %B %Y" in
+  let created_at = Time.format (Time.of_string created_at) fmt in
+  let modified_at = Time.format (Time.of_string modified_at) fmt in
   Fields.create ~created_at ~modified_at ~published ~link ~title ~description
 ;;
 

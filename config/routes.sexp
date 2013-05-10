@@ -1,6 +1,5 @@
-(
- ("/" (Html Post_index))
+(("/" (Html Post_index))
  ("/css/main.css" (Css Main))
  ("/css/reset.css" (Css Reset))
- ("/fonts/*" (File "/fonts/*"))
- )
+ ("/img/*" (Image "/img/*"))
+ ("/fonts/*" (File "/fonts/*")))

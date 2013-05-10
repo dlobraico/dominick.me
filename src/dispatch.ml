@@ -9,6 +9,18 @@ open Misc
 module Content_type = struct
   let html = [ ("content-type", "text/html") ]
   let css =  [ ("content-type", "text/css") ]
+  let image_t =  [ ("svg",  [ ("content-type", "image/svg+xml") ])
+                 ; ("png",  [ ("content-type", "image/png") ])
+                 ; ("jpg",  [ ("content-type", "image/jpg") ])
+                 ; ("gif",  [ ("content-type", "image/gif") ])
+                 ; ("tiff", [ ("content-type", "image/tiff") ]) ]
+
+  let image_t_of_filename f =
+    let (_, e) = Filename.split_extension f in
+    match e with
+    | Some ext -> List.Assoc.find image_t ext
+    | None -> None
+  ;;
 end
 
 module Handler = struct
@@ -47,15 +59,29 @@ module Handler = struct
   let html request controller =
     Log.debug "entering html handler with controller %s"
       (Sexp.to_string (Routes.Controller.Page.sexp_of_t controller));
-    let content = Post.html_of_t (Hashtbl.find_exn Post.Db.all 0) in
+    let content = <:html< $list:(List.intersperse
+                                   ~sep:(<:html< <div class="break"> </div> >>)
+                                   (List.map ~f:Post.html_of_t
+                                      (Hashtbl.data Post.Db.all)))$ >> in
     Tmpl.t "main" content
     >>= fun body ->
     dynamic ~headers:Content_type.html request (Html.to_string body)
   ;;
 
+  let image request path =
+    hlog "image" (Filename.parts path);
+    match Content_type.image_t_of_filename path with
+    | Some headers ->
+      Reader.file_contents path
+      >>= dynamic ~headers request
+    | None ->
+      Reader.file_contents path
+      >>= dynamic request
+  ;;
+
   let file request path =
-    hlog "file" path;
-    Reader.file_contents (String.concat ~sep:"/" path)
+    hlog "file" (Filename.parts path);
+    Reader.file_contents path
     >>= dynamic request
   ;;
 
@@ -74,7 +100,8 @@ let go conn_id ?body request =
   let open Routes.Handler in
   match route with
   | Some (Css controller)  -> Handler.css request controller
-  | Some (File path) -> Handler.file request (Filename.parts path)
+  | Some (File path) -> Handler.file request path
+  | Some (Image path) -> Handler.image request path
   | Some (Html controller) -> Handler.html request controller
   | _ -> Handler.not_found request (Filename.parts path)
 ;;

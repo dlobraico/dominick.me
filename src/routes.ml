@@ -24,6 +24,7 @@ end
 module Handler = struct
   type t = Html of Controller.Page.t
          | Css of Controller.Style.t
+         | Image of Path.t
          | File of Path.t
   with sexp
   ;;
@@ -60,6 +61,13 @@ let resolve_globs routes =
                   p ^/ (Filename.basename filepath)
                 in
                 (path, Handler.File filepath) :: acc)
+          | Handler.Image imagepath ->
+            List.fold ~init:acc (find_route imagepath)
+              ~f:(fun acc imagepath ->
+                let path =
+                  p ^/ (Filename.basename imagepath)
+                in
+                (path, Handler.Image imagepath) :: acc)
           | _ -> (path, handler) :: acc
         end
       | _ -> (path, handler) :: acc)
