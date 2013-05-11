@@ -59,10 +59,19 @@ module Handler = struct
   let html request controller =
     Log.debug "entering html handler with controller %s"
       (Sexp.to_string (Routes.Controller.Page.sexp_of_t controller));
-    let content = <:html< $list:(List.intersperse
-                                   ~sep:(<:html< <div class="break"> </div> >>)
-                                   (List.map ~f:Post.html_of_t
-                                      (Hashtbl.data Post.Db.all)))$ >> in
+    let content =
+      let open Routes.Controller.Page in
+      match controller with
+      | Post_index ->
+        begin
+          <:html< $list:(List.intersperse
+                           ~sep:(<:html< <div class="break"> </div> >>)
+                           (List.map ~f:Post.html_of_t
+                              (Hashtbl.data Post.Db.all)))$ >>
+        end
+      | Projects -> <:html< <h1>Projects</h1> >>
+      | About    -> <:html< <h1>About</h1> >>
+    in
     Tmpl.t "main" content
     >>= fun body ->
     dynamic ~headers:Content_type.html request (Html.to_string body)

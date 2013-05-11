@@ -6,7 +6,9 @@ open Misc
 module Controller = struct
   module Page = struct
     type t = Post_index
-             | Post_show
+           | Post_show
+           | Projects
+           | About
     with sexp
   end
 

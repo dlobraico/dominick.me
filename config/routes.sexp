@@ -1,4 +1,6 @@
 (("/" (Html Post_index))
+ ("/projects" (Html Projects))
+ ("/about" (Html About))
  ("/css/main.css" (Css Main))
  ("/css/reset.css" (Css Reset))
  ("/img/*" (Image "/img/*"))
