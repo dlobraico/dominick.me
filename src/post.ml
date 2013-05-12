@@ -57,8 +57,10 @@ module Db = struct
         | "0" -> false
         | "1" | _ -> true
       in
-
-      let post = create ~title ~link ~description ~created_at ~modified_at ~published in
-      Hashtbl.replace all ~key:id ~data:post)
+      match Hashtbl.mem all id with
+      | true -> ()
+      | _ ->
+        let post = create ~title ~link ~description ~created_at ~modified_at ~published in
+        Hashtbl.replace all ~key:id ~data:post)
   ;;
 end

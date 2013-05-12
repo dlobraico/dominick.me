@@ -19,11 +19,11 @@ let main port =
 
 let () =
   Command.async_basic ~summary:"Serve the dominick.me website"
-   Command.Spec.(empty
-                 +> flag "-daemonize"
-                   no_arg
-                   ~aliases:["-d"]
-                   ~doc:" Run the server in the background")
+    Command.Spec.(empty
+                  +> flag "-daemonize"
+                    no_arg
+                    ~aliases:["-d"]
+                    ~doc:" Run the server in the background")
     (fun daemonize () ->
       let release =
         match daemonize with
@@ -35,7 +35,9 @@ let () =
         Log.info "Starting dominick.me";
         Env.db_of_t Env.current
         >>> (fun db ->
-        ignore (Post.Db.load_all db));
+          Clock.every
+            (Time.Span.of_min 2.0)
+            (fun () -> ignore (Post.Db.load_all db)));
         main port
         >>| fun _server ->
         Log.info "Server started on port %d" port
