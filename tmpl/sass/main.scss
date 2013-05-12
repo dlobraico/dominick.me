@@ -15,14 +15,44 @@ body #wrapper {
     font-family: Cardo;
     font-size: 1em;
 
+    p {
+        max-width: 33em;
+        line-height: 1.5em;
+        margin-bottom: 10px;
+
+        a {
+            color: $red;
+            text-decoration: none;
+
+            &:hover {
+                color: $black;
+            }
+
+            &:visited {
+                color: $pale-red;
+                &:hover {
+                    color: $black;
+                }
+            }
+        }
+    }
+
+    p + p {
+        text-indent: 20px;
+    }
+
     header {
-        height: 48px;
         width: 100%;
         font-family: NeoRetroDraw;
         color: $gray;
         font-size: 2em;
         margin: 0;
         border-bottom: 2px $gray solid;
+
+        a { 
+            color: $gray;
+            text-decoration: none;
+        }
 
         h1 {
             text-align: center;
@@ -120,5 +150,44 @@ body #wrapper {
             background-repeat: no-repeat;
             background-size: 100%;
         }
+    }
+
+    #projects, #about {
+        h1 {
+            background: $black;
+            font-family: NeoRetroFill;
+            color: white;
+            text-align: center;
+        }
+    }
+
+    #projects {
+        @include fill-parent;
+
+        table {
+            tr {
+                td {
+                    padding-bottom: 20px;
+                    &.logo {
+                        @include span-columns(4 of 12);
+                    }
+                    &.description {
+                        @include span-columns(6 of 12);
+                        padding-left: 10px;
+                    }
+                    img {
+                        @include fill-parent;
+                        display: block;
+                        opacity: 0.5;
+                        &:hover {
+                            opacity: 0.9;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    #about {
     }
 }
