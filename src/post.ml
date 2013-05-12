@@ -10,17 +10,22 @@ type t =
   { created_at  : string
   ; modified_at : string
   ; published   : bool
-  ; link        : string
+  ; link        : string option
   ; title       : string
   ; description : string
   } with html, fields
 ;;
 
 let html_of_t t =
+  let title : Html.t =
+    match link t with
+    | Some l -> <:html< <a href="$str:l$">$str:title t$</a> >>
+    | None   -> <:html< $str:title t$ >>
+  in
   <:html<
     <article class="post">
       <header>
-        <h1 class="title"><a href=$str:link t$>$str:title t$</a></h1>
+        <h1 class="title">$title$</h1>
         <h2 class="created_at">$str:created_at t$</h2>
       </header>
       <div class="description">$str:description t$</div>
@@ -29,8 +34,8 @@ let html_of_t t =
 ;;
 
 let create ~created_at ~modified_at ~published ~link ~title ~description =
-  let fmt = "%l:%m %p, %d %B %Y" in
-  let created_at = Time.format (Time.of_string created_at) fmt in
+  let fmt = "%l:%M %p, %d %B %Y" in
+  let created_at  = Time.format (Time.of_string created_at) fmt in
   let modified_at = Time.format (Time.of_string modified_at) fmt in
   Fields.create ~created_at ~modified_at ~published ~link ~title ~description
 ;;
@@ -43,7 +48,7 @@ module Db = struct
     S.exec db sql ~cb:(fun row _headers ->
       let id          = Int.of_string (Option.value_exn (Array.get row 0)) in
       let title       = Option.value_exn (Array.get row 1) in
-      let link        = Option.value_exn (Array.get row 2) in
+      let link        = Array.get row 2 in
       let description = Option.value_exn (Array.get row 3) in
       let created_at  = Option.value_exn (Array.get row 4) in
       let modified_at = Option.value_exn (Array.get row 5) in

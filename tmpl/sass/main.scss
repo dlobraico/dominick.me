@@ -97,8 +97,6 @@ body #wrapper {
 
         article {
             list-style-type: none;
-            height: 96px;
-            margin-bottom: 4em;
             @include fill-parent;
 
             header {
@@ -109,6 +107,7 @@ body #wrapper {
                 h1.title {
                     float: left;
                     text-align: left;
+                    color: $black;
 
                     a {
                         color: $black;
