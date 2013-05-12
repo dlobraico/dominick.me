@@ -19,6 +19,7 @@ body #wrapper {
         max-width: 33em;
         line-height: 1.5em;
         margin-bottom: 10px;
+        text-align: justify;
 
         a {
             color: $red;
@@ -126,7 +127,7 @@ body #wrapper {
                 h2.created_at {
                     float: right;
                     text-align: right;
-                    color: $black;
+                    color: $pale-gray;
                     font-style: italic;
                 }
 
