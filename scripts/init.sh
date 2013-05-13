@@ -4,7 +4,7 @@
 # description: Init script for the OCaml program that serves my personal site.
 # processname: dal.native
 
-DAEMON_PATH="/home/deployer/apps/personal/dal.native"
+DAEMON_PATH="/home/deployer/apps/personal"
 
 DAEMON="dal.native"
 DAEMONOPTS="-d"
