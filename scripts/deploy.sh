@@ -12,4 +12,4 @@ echo "rebuilding"
 source /etc/profile.d/opam.sh
 ocamlbuild -use-ocamlfind src/dal.native
 echo "starting server"
-nohup /home/deployer/apps/personal/dal.native -daemonize -environment production
+/home/deployer/apps/personal/dal.native -daemonize -environment production
