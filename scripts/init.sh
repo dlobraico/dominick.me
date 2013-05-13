@@ -7,7 +7,7 @@
 DAEMON_PATH="/home/deployer/apps/personal"
 
 DAEMON="dal.native"
-DAEMONOPTS="-d"
+DAEMONOPTS="-daemonize -environment production"
 
 NAME="dal.native"
 DESC="OCaml program that serves my personal site."
