@@ -6,7 +6,7 @@
 
 DAEMON_PATH="/home/deployer/apps/personal"
 
-DAEMON="dal.native"
+DAEMON="./dal.native"
 DAEMONOPTS="-daemonize -environment production"
 
 NAME="dal.native"
