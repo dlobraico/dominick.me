@@ -1,4 +1,5 @@
 (("/" (Html Post_index))
+ ;; ("/post/:id" (Html (Post_show 0)))
  ("/projects" (Html Projects))
  ("/about" (Html About))
  ("/css/main.css" (Css Main))

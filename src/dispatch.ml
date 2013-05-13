@@ -45,15 +45,11 @@ module Handler = struct
        them in OCaml. *)
     Log.debug "entering css handler with controller %s"
       (Sexp.to_string (Routes.Controller.Style.sexp_of_t controller));
-    let body =
-      let open Routes.Controller.Style in
-      match controller with
-      | Main -> Reader.file_contents "public/css/main.css"
-      | Reset -> Reader.file_contents "public/css/reset.css"
-    in
-    body
-    >>= (fun body ->
-    dynamic ~headers:Content_type.css request body)
+    (let open Routes.Controller.Style in
+     match controller with
+     | Main ->  "public/css/main.css"
+     | Reset -> "public/css/reset.css")
+    |> Server.respond_with_file ~headers:(Header.of_list Content_type.css)
   ;;
 
   let html request controller =
@@ -70,6 +66,14 @@ module Handler = struct
                    (List.map ~f:Post.html_of_t
                       (Hashtbl.data Post.Db.all)))$
         </div> >>
+      | Post_show id ->
+        (* FIXME: Add support for routes with parameters. *)
+        return
+        begin
+          match Hashtbl.find Post.Db.all id with
+          | Some p -> <:html< <div id="post"> $Post.html_of_t p$ </div> >>
+          | None   -> <:html< <div id="post"> <p>Sorry, couldn't find that post.</p> </div> >>
+        end
       | Projects ->
         Reader.file_contents "tmpl/_projects.html"
         >>| (fun c -> <:html< $Html.of_string c$ >>)
@@ -84,19 +88,15 @@ module Handler = struct
 
   let image request path =
     hlog "image" (Filename.parts path);
-    match Content_type.image_t_of_filename path with
-    | Some headers ->
-      Reader.file_contents path
-      >>= dynamic ~headers request
-    | None ->
-      Reader.file_contents path
-      >>= dynamic request
+    let headers =
+      Option.map ~f:Header.of_list (Content_type.image_t_of_filename path)
+    in
+    Server.respond_with_file ?headers path
   ;;
 
   let file request path =
     hlog "file" (Filename.parts path);
-    Reader.file_contents path
-    >>= dynamic request
+    Server.respond_with_file path
   ;;
 
   let exn exn =
@@ -106,10 +106,11 @@ module Handler = struct
   ;;
 end
 
-let go conn_id ?body request =
+let go ~body sock request =
   Routes.load ()
   >>= fun routes ->
-  let path  = Request.path request in
+  let uri  = Request.uri request in
+  let path = Uri.path uri in
   let route = Routes.resolve routes path in
   let open Routes.Handler in
   match route with

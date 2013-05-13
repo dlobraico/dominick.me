@@ -9,12 +9,8 @@ open Misc
 
 let port = 8888;;
 
-let main port =
-  let config =
-    { Server.callback = Dispatch.go
-    ; port }
-  in
-  Server.main config
+let make_net_server () =
+  Server.create (Tcp.on_port port) Dispatch.go
 ;;
 
 let () =
@@ -38,7 +34,7 @@ let () =
           Clock.every
             (Time.Span.of_min 2.0)
             (fun () -> ignore (Post.Db.load_all db)));
-        main port
+        make_net_server ()
         >>| fun _server ->
         Log.info "Server started on port %d" port
       in
