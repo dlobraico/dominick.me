@@ -30,7 +30,7 @@ module Handler = struct
   ;;
 
   let dynamic ?(headers=[]) request body =
-    let status = `OK in
+    let code = `OK in
     let headers = Header.of_list headers in
     Server.respond_with_string ~headers ~code body
   ;;
