@@ -28,7 +28,7 @@ let html_of_t t =
         <h1 class="title">$title$</h1>
         <h2 class="created_at">$str:created_at t$</h2>
       </header>
-      <div class="description">$str:description t$</div>
+      <div class="description">$description t$</div>
     </article>
     >>
 ;;
