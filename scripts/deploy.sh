@@ -1,5 +1,6 @@
 #!/bin/sh
 
+echo "deploying dominick.me"
 cd /home/deployer/apps/personal
 git pull git@git.pyg8.com:dominick.me.git master
 echo "recompiling scss"
