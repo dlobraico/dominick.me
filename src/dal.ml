@@ -21,13 +21,17 @@ let () =
                     ~aliases:["-d"]
                     ~doc:" Run the server in the background")
     (fun daemonize () ->
-      let release =
+      Log.debug "daemonize = %b" daemonize;
+      let release_parent =
         match daemonize with
-        | true -> Daemon.daemonize_wait ()
+        | true -> Daemon.daemonize_wait ~cd:"."
+          ~redirect_stdout:`Do_not_redirect
+          ~redirect_stderr:`Do_not_redirect
+          ()
         | false -> Staged.stage (fun () -> ())
       in
       let s =
-        Log.info "Ignoring daemonize setting";
+        (*Log.info "Ignoring daemonize setting";*)
         Log.info "Starting dominick.me";
         Env.db_of_t Env.current
         >>> (fun db ->
@@ -39,7 +43,8 @@ let () =
         Log.info "Server started on port %d" port
       in
       don't_wait_for s;
-      Staged.unstage release ();
+      let release_parent = Staged.unstage release_parent in
+      release_parent ();
       never_returns (Scheduler.go ()))
   |! Command.run
 ;;
