@@ -5,15 +5,25 @@ open Cow
 let root = "/Users/dlobraico/Projects/personal-site-ocaml"
 
 let setup_logging =
-  (* Log.Global.set_output [ Log.Output.screen ]; *)
+  (* TODO: Make this more elegant. *)
+  let open Env in
   let filename =
-    let open Env in
     match current with
     | Production ->  "log/production.log"
     | Development -> "log/development.log"
   in
-  Log.Global.set_output [ Log.Output.screen; Log.Output.file `Text ~filename ];
-  Log.Global.set_level  `Debug;
+  let outputs =
+    match current with
+    | Production  -> [ Log.Output.file `Text ~filename ]
+    | Development -> [ Log.Output.screen; Log.Output.file `Text ~filename ]
+  in
+  let level =
+    match current with
+    | Production -> `Info
+    | Development -> `Debug
+  in
+  Log.Global.set_output outputs;
+  Log.Global.set_level level;
 ;;
 
 module Log = Log.Global
