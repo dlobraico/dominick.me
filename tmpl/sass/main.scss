@@ -42,13 +42,13 @@ body #wrapper {
         text-indent: 20px;
     }
 
-    header {
+    header#main {
         width: 100%;
         font-family: NeoRetroDraw;
         color: $gray;
         font-size: 2em;
         margin: 0;
-        border-bottom: 2px $gray solid;
+        // border-bottom: 2px $gray solid;
 
         a { 
             color: $gray;
@@ -92,6 +92,15 @@ body #wrapper {
         }
     }
     
+    #projects, #about, #posts {
+        header {
+            background: $black;
+            font-family: NeoRetroFill;
+            color: white;
+            text-align: center;
+            border: none;
+        }
+    }
 
     #posts {
         @include fill-parent;
@@ -101,9 +110,11 @@ body #wrapper {
             @include fill-parent;
 
             header {
+                background: white;
                 font-family: Cardo;
                 font-size: 1.1em;
                 height: 30px;
+                border-bottom: 2px $gray solid;
 
                 h1.title {
                     float: left;
@@ -149,15 +160,6 @@ body #wrapper {
             background-image: url('/img/break.svg');
             background-repeat: no-repeat;
             background-size: 100%;
-        }
-    }
-
-    #projects, #about {
-        h1 {
-            background: $black;
-            font-family: NeoRetroFill;
-            color: white;
-            text-align: center;
         }
     }
 

@@ -61,6 +61,7 @@ module Handler = struct
       | Post_index ->
         return
         <:html< <div id="posts">
+          <header><h1>Posts</h1></header>
           $list:(List.intersperse
                    ~sep:(<:html< <div class="break"> </div> >>)
                    (List.map ~f:Post.html_of_t
