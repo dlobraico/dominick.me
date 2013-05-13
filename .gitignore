@@ -3,3 +3,5 @@ _build
 *.byte
 .sass-cache
 public/css
+db/*.db
+log
