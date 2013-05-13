@@ -4,6 +4,8 @@
 # description: Init script for the OCaml program that serves my personal site.
 # processname: dal.native
 
+## FIXME: This script is currently broken/unusable.
+
 DAEMON_PATH="/home/deployer/apps/personal"
 
 DAEMON="./dal.native"
