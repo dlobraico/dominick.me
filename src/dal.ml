@@ -1,5 +1,6 @@
 open Core.Std
 open Core_extended.Std
+module CoreSys = Sys
 open Async.Std
 open Cohttp
 open Cohttp_async
@@ -7,7 +8,7 @@ open Cow
 
 open Misc
 
-let port = 8888;;
+let port = 8888
 
 let make_net_server () =
   Server.create (Tcp.on_port port) Dispatch.go
@@ -19,9 +20,24 @@ let () =
                   +> flag "-daemonize"
                     no_arg
                     ~aliases:["-d"]
-                    ~doc:" Run the server in the background")
-    (fun daemonize () ->
+                    ~doc:" Run the server in the background"
+                  +> flag "-environment"
+                    (optional string)
+                    ~aliases:["-e"]
+                    ~doc:" Set the environment (production or development)")
+    (fun daemonize environment_opt () ->
       Log.debug "daemonize = %b" daemonize;
+      begin
+        match environment_opt with
+        | Some s -> Env.current_env := Env.of_string s
+        | None   ->
+          begin
+            match CoreSys.getenv "DAL_ENV" with
+            | Some s -> Env.current_env := Env.of_string s
+            | _ -> ()
+          end
+      end;
+      Log.debug "environment = %s" (Env.to_string (Env.current ()));
       let release_parent =
         match daemonize with
         | true -> Daemon.daemonize_wait ~cd:"."
@@ -33,7 +49,7 @@ let () =
       let s =
         (*Log.info "Ignoring daemonize setting";*)
         Log.info "Starting dominick.me";
-        Env.db_of_t Env.current
+        Env.db_of_t (Env.current ())
         >>> (fun db ->
           Clock.every
             (Time.Span.of_min 2.0)

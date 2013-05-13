@@ -2,11 +2,10 @@ open Core.Std
 open Async.Std
 open Cow
 
-let root = "/Users/dlobraico/Projects/personal-site-ocaml"
-
 let setup_logging =
   (* TODO: Make this more elegant. *)
   let open Env in
+  let current = current () in
   let filename =
     match current with
     | Production ->  "log/production.log"

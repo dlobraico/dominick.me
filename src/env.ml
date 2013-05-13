@@ -5,12 +5,21 @@ type t = Production
 with sexp
 ;;
 
-let current =
-  match Option.map ~f:String.lowercase (Sys.getenv "DAL_ENV") with
-  | Some "production" -> Production
-  | Some "development" -> Development
-  | _ -> Development
+let default = Development
+let current_env = ref default
+
+let current () = !current_env
+
+let to_string = function
+  | Production -> "production"
+  | Development -> "development"
 ;;
+
+let of_string s =
+  match String.lowercase s with
+  | "production" -> Production
+  | "development" -> Development
+  | _ -> default
 
 let db_of_t ?mode t =
   match t with
