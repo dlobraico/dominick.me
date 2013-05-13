@@ -32,12 +32,12 @@ module Handler = struct
   let dynamic ?(headers=[]) request body =
     let status = `OK in
     let headers = Header.of_list headers in
-    Server.respond_string ~headers ~status ~body ()
+    Server.respond_with_string ~headers ~status ~body ()
   ;;
 
   let not_found request path =
     hlog "not_found" path;
-    Server.respond_string ~status:`Not_found ~body:"Not found." ()
+    Server.respond_with_string ~status:`Not_found ~body:"Not found." ()
   ;;
 
   let css request controller =
