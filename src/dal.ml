@@ -38,6 +38,7 @@ let () =
           end
       end;
       Log.debug "environment = %s" (Env.to_string (Env.current ()));
+      setup_logging () (* This has to happen after the environment is set. *)
       let release_parent =
         match daemonize with
         | true -> Daemon.daemonize_wait ~cd:"."

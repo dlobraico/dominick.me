@@ -2,7 +2,7 @@ open Core.Std
 open Async.Std
 open Cow
 
-let setup_logging =
+let setup_logging () =
   (* TODO: Make this more elegant. *)
   let open Env in
   let current = current () in
