@@ -7,6 +7,7 @@ module Controller = struct
   module Page = struct
     type t = Post_index
            | Post_show of int
+           | Post_new
            | Projects
            | About
     with sexp

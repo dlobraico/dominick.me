@@ -67,6 +67,7 @@ module Handler = struct
                    (List.map ~f:Post.html_of_t
                       (Hashtbl.data Post.Db.all)))$
         </div> >>
+      | Post_new -> return <:html< <div id="new_post"> </div> >>
       | Post_show id ->
         (* FIXME: Add support for routes with parameters. *)
         return
