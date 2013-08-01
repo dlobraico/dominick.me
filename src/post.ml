@@ -33,6 +33,8 @@ let html_of_t t =
     >>
 ;;
 
+(* CR dlobraico: Create a html_form_of_t function (or similar) *)
+
 let create ~created_at ~modified_at ~published ~link ~title ~description =
   let fmt = "%l:%M %p, %d %B %Y" in
   let created_at  = Time.format (Time.of_string created_at) fmt in
@@ -62,5 +64,24 @@ module Db = struct
       | _ ->
         let post = create ~title ~link ~description ~created_at ~modified_at ~published in
         Hashtbl.replace all ~key:id ~data:post)
+  ;;
+
+  let save ~db t =
+    let title = S.Data.TEXT (title t) in
+    let link =
+      match link t with
+      | Some l -> S.Data.TEXT l
+      | None -> S.Data.NULL
+    in
+    let description = S.Data.TEXT (description t) in
+    let published = S.Data.INT (Bool.int64_of_t (published t)) in
+    let sql = "INSERT INTO Posts (title, link, description, published) VALUES (?, ?, ?, ?)" in
+    let pstmt = S.prepare db sql in
+    let _ =
+      List.iteri
+        ~f:(fun idx value -> ignore (S.bind pstmt (idx + 1) value))
+        [title; link; description; published]
+    in
+    S.step pstmt
   ;;
 end

@@ -5,7 +5,7 @@ open Cow
 
 open Misc
 
-let main_tmpl = "tmpl/main.html"
+let main_tmpl = "tmpl/layouts/application.html"
 
 let substitute vars template =
   List.fold vars ~init:template ~f:(fun tmpl (k, v) ->

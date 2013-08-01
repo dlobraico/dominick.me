@@ -14,7 +14,7 @@ let setup_logging () =
   let outputs =
     match current with
     | Production  -> [ Log.Output.file `Text ~filename ]
-    | Development -> [ Log.Output.screen; Log.Output.file `Text ~filename ]
+    | Development -> [ Log.Output.stdout (); Log.Output.file `Text ~filename ]
   in
   let level =
     match current with
@@ -27,13 +27,6 @@ let setup_logging () =
 
 module Log = Log.Global
 
-module List = struct
-  (* Core.List doesn't include the flatten function which apparently causes problems with
-     Cow's quoting mechanism. *)
-  include List
-  let flatten = concat
-end
-
 module Float = struct
   include Float
   let html_of_t t = <:html< $str:(Float.to_string t)$ >>
@@ -42,4 +35,12 @@ end
 module Time = struct
   include Time
   let html_of_t t = <:html< $str:(Time.to_string t)$ >>
+end
+
+module Bool = struct
+  include Bool
+  let int64_of_t = function
+    | true  -> Int.to_int64 1
+    | false -> Int.to_int64 0
+  ;;
 end

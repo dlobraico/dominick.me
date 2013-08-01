@@ -6,6 +6,7 @@ open Misc
 module Controller = struct
   module Page = struct
     type t = Post_index
+           (* | Post_create *)
            | Post_show of int
            | Post_new
            | Projects
@@ -38,6 +39,28 @@ module Route = struct
 end
 
 type t = Route.t list with sexp
+
+(* CR dlobraico: We should manually define t_of_sexp and sexp_of_t for Routes so we can do
+   some custom parsing. *)
+(* let t_of_sexp sexp =
+ *   let open Sexp in
+ *   let parse_entry = function
+ *     | Atom _ -> failwith "expected a list"
+ *     | List [ path; handler ] ->
+ *       begin
+ *         let path = match path with | Atom a -> a | _ -> failwith "expected an Atom" in
+ *         (path, Handler.t_of_sexp handler)
+ *       end
+ *     | List _ -> failwith "expected a list of length 2"
+ *   in
+ *   match sexp with
+ *   | Atom _ -> failwith "expected a list"
+ *   | List ls -> List.map ~f:parse_entry ls
+ * ;;
+ *
+ * let sexp_of_t t =
+ *   ...
+ * ;; *)
 
 let default_path = "config/routes.sexp"
 

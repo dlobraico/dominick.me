@@ -60,28 +60,19 @@ module Handler = struct
       match controller with
       | Post_index ->
         return
-        <:html< <div id="posts">
+        <:html< <div class="posts" id="index">
           <header><h1>Posts</h1></header>
           $list:(List.intersperse
                    ~sep:(<:html< <div class="break"> </div> >>)
                    (List.map ~f:Post.html_of_t
                       (Hashtbl.data Post.Db.all)))$
         </div> >>
-      | Post_new -> return <:html< <div id="new_post"> </div> >>
-      | Post_show id ->
-        (* FIXME: Add support for routes with parameters. *)
-        return
-        begin
-          match Hashtbl.find Post.Db.all id with
-          | Some p -> <:html< <div id="post"> $Post.html_of_t p$ </div> >>
-          | None   -> <:html< <div id="post"> <p>Sorry, couldn't find that post.</p> </div> >>
-        end
-      | Projects ->
-        Reader.file_contents "tmpl/_projects.html"
-        >>| (fun c -> <:html< $Html.of_string c$ >>)
-      | About    ->
-        Reader.file_contents "tmpl/_about.html"
-        >>| (fun c -> <:html< $Html.of_string c$ >>)
+      | Post_create -> Pages.Post.create ()
+      | Post_new -> Pages.Post.new_ ()
+      (* CR dlobraico: Add support for routes with parameters. *)
+      | Post_show id -> Pages.Post.show id ()
+      | Projects -> Pages.projects ()
+      | About    -> Pages.about ()
     end
     >>= fun c -> Tmpl.t "main" c
     >>= fun body ->

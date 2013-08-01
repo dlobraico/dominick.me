@@ -1,0 +1,23 @@
+<div class="posts" id="new">
+  <header>
+    <h1>New Post</h1>
+  </header>
+
+  <form name="new_post" action="create" method="post">
+    <input type="text" name="title" id="title" placeholder="Title" />
+    <input type="text" name="link" id="link" placeholder="Link" />
+
+    <label name="published">Published:</label> 
+    <input type="checkbox" name="published" id="published" />
+
+    <div>
+      <textarea name="description" id="description" rows="10"
+                placeholder="Description">
+      </textarea>
+    </div>
+
+    <div id="submit">
+      <input type="submit" value="Submit" />
+    </div>
+  </form>
+</div>

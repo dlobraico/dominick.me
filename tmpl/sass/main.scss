@@ -4,6 +4,7 @@
 
 @import 'fonts';
 @import 'colors';
+@import 'mixins';
 
 html, body {}
 
@@ -92,104 +93,116 @@ body #wrapper {
         }
     }
     
-    #projects, #about, #posts {
-        header {
-            background: $black;
-            font-family: NeoRetroFill;
-            color: white;
-            text-align: center;
-            border: none;
-        }
-    }
+    .posts {
+        @include black-header;
 
-    #posts {
-        @include fill-parent;
-
-        article {
-            list-style-type: none;
+        &#index {
             @include fill-parent;
 
-            header {
-                background: white;
-                font-family: Cardo;
-                font-size: 1.1em;
-                height: 30px;
-                border-bottom: 2px $gray solid;
+            article {
+                list-style-type: none;
+                @include fill-parent;
 
-                h1.title {
-                    float: left;
-                    text-align: left;
-                    color: $black;
+                header {
+                    background: white;
+                    font-family: Cardo;
+                    font-size: 1.1em;
+                    height: 30px;
+                    border-bottom: 2px $gray solid;
 
-                    a {
+                    h1.title {
+                        float: left;
+                        text-align: left;
                         color: $black;
-                        text-decoration: none;
-                        border-left: 2px solid $red;
-                        padding-left: 2px;
+
+                        a {
+                            color: $black;
+                            text-decoration: none;
+                            border-left: 2px solid $red;
+                            padding-left: 2px;
+                        }
+
+                        a:hover {
+                            padding: 0;
+                            padding-left: 4px;
+                            border-left: none;
+                        }
                     }
 
-                    a:hover {
-                        padding: 0;
-                        padding-left: 4px;
-                        border-left: none;
+                    h2.created_at {
+                        float: right;
+                        text-align: right;
+                        color: $pale-gray;
+                        font-style: italic;
                     }
+
                 }
 
-                h2.created_at {
-                    float: right;
-                    text-align: right;
-                    color: $pale-gray;
-                    font-style: italic;
+                .description {
+                    clear: both;
+                    text-align: justify;
+                    color: $black;
                 }
-
             }
 
-            .description {
+            .break {
                 clear: both;
-                text-align: justify;
-                color: $black;
+                margin: 0px auto;
+                margin-top: 1em;
+                height: 30px;
+                width: 30px;
+                background-image: url('/img/break.svg');
+                background-repeat: no-repeat;
+                background-size: 100%;
             }
         }
 
-        .break {
-            clear: both;
-            margin: 0px auto;
-            margin-top: 1em;
-            height: 30px;
-            width: 30px;
-            background-image: url('/img/break.svg');
-            background-repeat: no-repeat;
-            background-size: 100%;
+        &#new {
+            #link, #title {
+                display: block;
+                font-size: 20px;
+                @include fill-parent;
+            }
+
+            #published {}
+
+            #description {
+                @include fill-parent;
+            }
         }
     }
 
-    #projects {
-        @include fill-parent;
+    .pages {
+        @include black-header;
 
-        table {
-            tr {
-                td {
-                    padding-bottom: 20px;
-                    &.logo {
-                        @include span-columns(4 of 12);
-                    }
-                    &.description {
-                        @include span-columns(6 of 12);
-                        padding-left: 10px;
-                    }
-                    img {
-                        @include fill-parent;
-                        display: block;
-                        opacity: 0.5;
-                        &:hover {
-                            opacity: 0.9;
+        &#projects {
+            @include fill-parent;
+
+            table {
+                tr {
+                    td {
+                        padding-bottom: 20px;
+                        &.logo {
+                            @include span-columns(4 of 12);
+                        }
+                        &.description {
+                            @include span-columns(6 of 12);
+                            padding-left: 10px;
+                        }
+                        img {
+                            @include fill-parent;
+                            display: block;
+                            opacity: 0.5;
+                            &:hover {
+                                opacity: 0.9;
+                            }
                         }
                     }
                 }
             }
         }
-    }
 
-    #about {
+        &#about {
+        }
     }
 }

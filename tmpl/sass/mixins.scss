@@ -1,0 +1,9 @@
+@mixin black-header {
+    header {
+        background: $black;
+        font-family: NeoRetroFill;
+        color: white;
+        text-align: center;
+        border: none;
+    }
+}
