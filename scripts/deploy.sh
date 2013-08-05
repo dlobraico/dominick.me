@@ -3,6 +3,7 @@
 echo "deploying dominick.me"
 cd /home/deployer/apps/personal
 git pull git@git.pyg8.com:dominick.me.git master
+git checkout prod
 echo "recompiling scss"
 source /etc/profile.d/rbenv.sh
 sass --update tmpl/sass:public/css
