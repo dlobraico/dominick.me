@@ -6,7 +6,7 @@ open Misc
 module Controller = struct
   module Page = struct
     type t = Post_index
-           (* | Post_create *)
+           | Post_create
            | Post_show of int
            | Post_new
            | Projects

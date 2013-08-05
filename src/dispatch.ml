@@ -41,8 +41,8 @@ module Handler = struct
   ;;
 
   let css request controller =
-    (* TODO: Currently, we are using actual CSS files here instead of using Cow to write
-       them in OCaml. *)
+    (* CR dlobraico: Currently, we are using actual CSS files here instead of using Cow to
+       write them in OCaml. *)
     Log.debug "entering css handler with controller %s"
       (Sexp.to_string (Routes.Controller.Style.sexp_of_t controller));
     (let open Routes.Controller.Style in
@@ -52,22 +52,14 @@ module Handler = struct
     |> Server.respond_with_file ~headers:(Header.of_list Content_type.css)
   ;;
 
-  let html request controller =
+  let html request body controller =
     Log.debug "entering html handler with controller %s"
       (Sexp.to_string (Routes.Controller.Page.sexp_of_t controller));
     begin
       let open Routes.Controller.Page in
       match controller with
-      | Post_index ->
-        return
-        <:html< <div class="posts" id="index">
-          <header><h1>Posts</h1></header>
-          $list:(List.intersperse
-                   ~sep:(<:html< <div class="break"> </div> >>)
-                   (List.map ~f:Post.html_of_t
-                      (Hashtbl.data Post.Db.all)))$
-        </div> >>
-      | Post_create -> Pages.Post.create ()
+      | Post_index -> Pages.Post.index ()
+      | Post_create -> Pages.Post.create request body ()
       | Post_new -> Pages.Post.new_ ()
       (* CR dlobraico: Add support for routes with parameters. *)
       | Post_show id -> Pages.Post.show id ()
@@ -110,6 +102,6 @@ let go ~body sock request =
   | Some (Css controller)  -> Handler.css request controller
   | Some (File path) -> Handler.file request path
   | Some (Image path) -> Handler.image request path
-  | Some (Html controller) -> Handler.html request controller
+  | Some (Html controller) -> Handler.html request body controller
   | _ -> Handler.not_found request (Filename.parts path)
 ;;

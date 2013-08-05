@@ -35,12 +35,7 @@ let html_of_t t =
 
 (* CR dlobraico: Create a html_form_of_t function (or similar) *)
 
-let create ~created_at ~modified_at ~published ~link ~title ~description =
-  let fmt = "%l:%M %p, %d %B %Y" in
-  let created_at  = Time.format (Time.of_string created_at) fmt in
-  let modified_at = Time.format (Time.of_string modified_at) fmt in
-  Fields.create ~created_at ~modified_at ~published ~link ~title ~description
-;;
+let create = Fields.create
 
 module Db = struct
   let all = Int.Table.create () ;;
@@ -49,11 +44,11 @@ module Db = struct
     let sql = "SELECT * FROM Posts" in
     S.exec db sql ~cb:(fun row _headers ->
       let id          = Int.of_string (Option.value_exn (Array.get row 0)) in
-      let title       = Option.value_exn (Array.get row 1) in
+      let title       = Option.value ~default:"" (Array.get row 1) in
       let link        = Array.get row 2 in
-      let description = Option.value_exn (Array.get row 3) in
-      let created_at  = Option.value_exn (Array.get row 4) in
-      let modified_at = Option.value_exn (Array.get row 5) in
+      let description = Option.value ~default:"" (Array.get row 3) in
+      let created_at  = Time.of_string (Option.value_exn (Array.get row 4)) in
+      let modified_at = Time.of_string (Option.value_exn (Array.get row 5)) in
       let published   =
         match Option.value_exn (Array.get row 6) with
         | "0" -> false
@@ -62,11 +57,17 @@ module Db = struct
       match Hashtbl.mem all id with
       | true -> ()
       | _ ->
-        let post = create ~title ~link ~description ~created_at ~modified_at ~published in
+        let fmt = "%l:%M %p, %d %B %Y" in
+        let created_at  = Time.format created_at fmt in
+        let modified_at = Time.format modified_at fmt in
+        let post =
+          create ~title ~link ~description ~created_at ~modified_at ~published
+        in
         Hashtbl.replace all ~key:id ~data:post)
   ;;
 
   let save ~db t =
+    (* CR-soon dlobraico: Why aren't times being written to db? *)
     let title = S.Data.TEXT (title t) in
     let link =
       match link t with
@@ -75,12 +76,17 @@ module Db = struct
     in
     let description = S.Data.TEXT (description t) in
     let published = S.Data.INT (Bool.int64_of_t (published t)) in
-    let sql = "INSERT INTO Posts (title, link, description, published) VALUES (?, ?, ?, ?)" in
+    let created_at = S.Data.TEXT (created_at t) in
+    let modified_at = S.Data.TEXT (modified_at t) in
+    let sql =
+      "INSERT INTO Posts (title, url, description, published, created_at, modified_at)
+       VALUES (?, ?, ?, ?, ?, ?)"
+    in
     let pstmt = S.prepare db sql in
     let _ =
       List.iteri
         ~f:(fun idx value -> ignore (S.bind pstmt (idx + 1) value))
-        [title; link; description; published]
+        [title; link; description; published; created_at; modified_at]
     in
     S.step pstmt
   ;;

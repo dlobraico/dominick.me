@@ -1,5 +1,5 @@
 CREATE TABLE posts (
-	id INT,
+	id INTEGER,
 	title TEXT,
 	url   TEXT,
 	description TEXT,

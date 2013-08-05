@@ -1,7 +1,8 @@
 open Core.Std
 open Core_extended.Std
-module CoreSys = Sys
+module Core_sys = Sys
 open Async.Std
+
 open Cohttp
 open Cohttp_async
 open Cow
@@ -15,7 +16,8 @@ let make_net_server () =
 ;;
 
 let () =
-  Command.async_basic ~summary:"Serve the dominick.me website"
+  Command.async_basic
+    ~summary:"Serve the dominick.me website"
     Command.Spec.(empty
                   +> flag "-daemonize"
                     no_arg
@@ -32,7 +34,7 @@ let () =
         | Some s -> Env.current_env := Env.of_string s
         | None   ->
           begin
-            match CoreSys.getenv "DAL_ENV" with
+            match Core_sys.getenv "DAL_ENV" with
             | Some s -> Env.current_env := Env.of_string s
             | _ -> ()
           end
@@ -48,10 +50,10 @@ let () =
         | false -> Staged.stage (fun () -> ())
       in
       let s =
-        (*Log.info "Ignoring daemonize setting";*)
         Log.info "Starting dominick.me";
         Env.db_of_t (Env.current ())
         >>> (fun db ->
+          (* CR dlobraico: lol fix this pretend caching? *)
           Clock.every
             (Time.Span.of_min 2.0)
             (fun () -> ignore (Post.Db.load_all db)));
