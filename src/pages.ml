@@ -45,12 +45,12 @@ module Post = struct
     then return <:html< <div class="posts" id="create"> $Html.of_string "Failure"$ </div> >>
     else
       begin
-        Pipe.read (Option.value_exn body)
-        >>| (function
         (* CR dlobraico: It seems like we should be using Request.read_form here but I don't
            see how it can be used here in its current form. *)
-        | `Ok form -> Uri.query_of_encoded form
-        | _ -> [])
+        Pipe.to_list (Option.value_exn body)
+        >>| (fun form_split ->
+          let form = String.concat form_split in
+          Uri.query_of_encoded form)
         >>= fun query ->
         let getopt_f f = Option.map ~f:List.hd_exn (List.Assoc.find query f) in
         let getf f = Option.value ~default:"" (getopt_f f) in
